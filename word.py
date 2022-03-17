@@ -28,7 +28,7 @@ for line in lines:
     line = line.strip()  # 줄 끝의 줄 바꿈 문자를 제거한다.
     list1.append(line)
 
-characters =".,!?'"
+characters =".,!?'()"
 
 
 for i in range(len(list1)):
@@ -37,6 +37,8 @@ for i in range(len(list1)):
     word1 = word1.replace(characters[2]," ")
     word1 = word1.replace(characters[3]," ")
     word1 = word1.replace(characters[4]," ")
+    word1 = word1.replace(characters[5]," ")
+    word1 = word1.replace(characters[6]," ")
     word1 = word1.split('|')
     
     list2.append(word1)
@@ -72,7 +74,12 @@ for i in range(len(arr2)):
 s = open('no1.txt','w')
 
 
-for i in range(10):
+for i in range(20):
+    a = okt.nouns(arr2[i][0])
+    
+    b = okt.nouns(arr2[i][1])
+    c = okt.nouns(arr2[i][2])
+    print(okt.nouns(arr2[i][0]),okt.nouns(arr2[i][1]),okt.nouns(arr2[i][2]))
     print(okt.nouns(arr3[i]))
 
 	    
