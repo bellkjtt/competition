@@ -8,13 +8,14 @@ import pandas as pd
 from pandas import DataFrame
 import matplotlib.pyplot as plt
 
-import numpy as np
 import itertools
 
 from konlpy.tag import Okt
+from konlpy.tag import Mecab
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
+
 
 import sys
 
@@ -60,6 +61,7 @@ for i in range(len(arr)):
     
 
 okt = Okt()
+mecab = Mecab(dicpath=r"C:/mecab/mecab-ko-dic")
 
 no1=[]
 no2=[]
@@ -79,11 +81,24 @@ for i in range(20):
     
     b = okt.nouns(arr2[i][1])
     c = okt.nouns(arr2[i][2])
-    print(okt.nouns(arr2[i][0]),okt.nouns(arr2[i][1]),okt.nouns(arr2[i][2]))
+    print(okt.nouns(arr2[i][0])+okt.nouns(arr2[i][1])+okt.nouns(arr2[i][2]))
     print(okt.nouns(arr3[i]))
+
+
+print('----------------------')
+      
+for i in range(20):
+    a = mecab.nouns(arr2[i][0])
+    
+    b = mecab.nouns(arr2[i][1])
+    c = mecab.nouns(arr2[i][2])
+    print(mecab.nouns(arr2[i][0])+okt.nouns(arr2[i][1])+okt.nouns(arr2[i][2]))
+    print(mecab.nouns(arr3[i]))
 
 	    
 s.close()
+
+
 
 #for i in range(len(arr2)):
     #no1.append(okt.nouns(arr2[i][0]))
