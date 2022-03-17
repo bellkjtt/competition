@@ -16,6 +16,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 
+import sys
+
 list1=[]
 list2=[]
 
@@ -26,15 +28,60 @@ for line in lines:
     line = line.strip()  # 줄 끝의 줄 바꿈 문자를 제거한다.
     list1.append(line)
 
+characters =".,!?'"
+
 
 for i in range(len(list1)):
-    word1 = list1[i].split('|')
+    word1 = list1[i].replace(characters[0]," ")
+    word1 = word1.replace(characters[1]," ")
+    word1 = word1.replace(characters[2]," ")
+    word1 = word1.replace(characters[3]," ")
+    word1 = word1.replace(characters[4]," ")
+    word1 = word1.split('|')
+    
     list2.append(word1)
 
 arr=np.array(list2)
+arr=np.delete(arr,(0),axis=0)
+arr=np.delete(arr,(0),axis=1)
 
+ans1= []
+ans2= []
+ans3= []
+arr2 =[]
+
+for i in range(len(arr)):
+    ans1.append(arr[i][0])
+    ans2.append(arr[i][1])
+    ans3.append(arr[i][2])
+    arr2.append(arr[i][3:6])
+    
 
 okt = Okt()
+
+no1=[]
+no2=[]
+no3=[]
+
+arr3=[]
+
+
+for i in range(len(arr2)):
+      arr3.append(arr2[i][0]+" "+arr2[i][1]+" "+arr2[i][2])
+
+s = open('no1.txt','w')
+
+
+for i in range(10):
+    print(okt.nouns(arr3[i]))
+
+	    
+s.close()
+
+#for i in range(len(arr2)):
+    #no1.append(okt.nouns(arr2[i][0]))
+    #no2.append(okt.nouns(arr2[i][1]))
+    #no3.append(okt.nouns(arr2[i][2]))
 
 
 #tokenized_doc = okt.pos(doc)
