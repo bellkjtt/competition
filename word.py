@@ -16,11 +16,22 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 
+list1=[]
+list2=[]
+
+f = open("a1.txt", 'r')
+lines = f.readlines()
+
+for line in lines:
+    line = line.strip()  # 줄 끝의 줄 바꿈 문자를 제거한다.
+    list1.append(line)
 
 
+for i in range(len(list1)):
+    word1 = list1[i].split('|')
+    list2.append(word1)
 
-
-
+arr=np.array(list2)
 
 
 okt = Okt()
