@@ -16,8 +16,12 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 
+from pykospacing import Spacing
 
 import sys
+
+
+spacing = Spacing()
 
 list1=[]
 list2=[]
@@ -73,63 +77,43 @@ arr3=[]
 for i in range(len(arr2)):
       arr3.append(arr2[i][0]+" "+arr2[i][1]+" "+arr2[i][2])
 
-s = open('no1.txt','w')
-
+okt1 =[]
 
 for i in range(20):
-    a = okt.nouns(arr2[i][0])
-    
+    a = okt.nouns(arr2[i][0])  
     b = okt.nouns(arr2[i][1])
     c = okt.nouns(arr2[i][2])
-    print(okt.nouns(arr2[i][0])+okt.nouns(arr2[i][1])+okt.nouns(arr2[i][2]))
-    print(okt.nouns(arr3[i]))
-
+    d = okt.nouns(arr2[i][0])+okt.nouns(arr2[i][1])+okt.nouns(arr2[i][2])
+    e = okt.nouns(arr3[i])
+    okt1.append(list(set(d+e)))
 
 print('----------------------')
-      
+
+
+mecab1 =[]
+#with open('no1.txt','w',encoding='UTF-8') as s:
+          
 for i in range(20):
-    a = mecab.nouns(arr2[i][0])
-    
+    a = mecab.nouns(arr2[i][0])       
     b = mecab.nouns(arr2[i][1])
     c = mecab.nouns(arr2[i][2])
-    print(mecab.nouns(arr2[i][0])+okt.nouns(arr2[i][1])+okt.nouns(arr2[i][2]))
-    print(mecab.nouns(arr3[i]))
+    d = mecab.nouns(arr2[i][0])+okt.nouns(arr2[i][1])+okt.nouns(arr2[i][2])
+    e = mecab.nouns(arr3[i])
+    mecab1.append(list(set(d+e)))
 
-	    
-s.close()
-
-
-
-#for i in range(len(arr2)):
-    #no1.append(okt.nouns(arr2[i][0]))
-    #no2.append(okt.nouns(arr2[i][1]))
-    #no3.append(okt.nouns(arr2[i][2]))
+  
+#s.close()
 
 
-#tokenized_doc = okt.pos(doc)
-#tokenized_nouns = ' '.join([word[0] for word in tokenized_doc if word[1] == 'Noun'])
+mix1 =[]
 
-#print('품사 태깅 10개만 출력 :',tokenized_doc[:10])
-#print('명사 추출 :',tokenized_nouns)
+for i in range(20):
+    mix1.append(list(set(okt1[i]+mecab1[i])))
 
-#k = sum(1 for line in df)
-#df_0 =pd.read_csv('b.csv')
-                                  
-#df_0 =df_0.fillna(0)
-
-#i = df_0[df_0['수시로'] == '서브'].index #원하는 행 삭제 가능
-#i2 = df_0[df_0['수시로'] == '0'].index
-#i3 = df_0[df_0['ex2'] == 'ex2'].index
+print(mix1)
 
 
-#df_0 = df_0.drop(i)
-#df_0 = df_0.drop(i2)
-#df_0 = df_0.drop(i3)
-#df_1 = df_0.drop(['수시로'], axis=1) #열 중 맨 위의 이름으로만 삭제 가능
-#low = df_1.drop(['ex3','ex4','ex5','5','6','7','8','9'], axis=1)
-#middle = df_1.drop(['ex2','ex4','ex5','4','7','8','9'], axis=1)
-#high = df_1.drop(['ex2','ex3','ex5','4','5','6','8','9'], axis=1)
-#high2 = df_1.drop(['ex2','ex3','ex4','4','5','6','7'], axis=1)
-#ll = df_1.drop(['ex2','ex4','ex5','4','7','8','9'], axis=1)
-#mm = df_1.drop(['ex2','ex3','ex5','4','5','6','8','9'], axis=1)
-#hh = df_1.drop(['ex2','ex3','ex4','4','5','6','7'], axis=1)
+
+
+
+
