@@ -91,7 +91,7 @@ for i in range(len(arr2)):
 
 okt1 =[]
 
-for i in range(100):
+for i in range(10000):
     a = okt.nouns(arr2[i][0])  
     b = okt.nouns(arr2[i][1])
     c = okt.nouns(arr2[i][2])
@@ -105,7 +105,7 @@ print('----------------------')
 mecab1 =[]
 #with open('no1.txt','w',encoding='UTF-8') as s:
           
-for i in range(100):
+for i in range(10000):
     a = mecab.nouns(arr2[i][0])       
     b = mecab.nouns(arr2[i][1])
     c = mecab.nouns(arr2[i][2])
@@ -124,33 +124,41 @@ for i in range(100):
 
 mix1 =[]
 
-for i in range(100):
+for i in range(10000):
     mix1.append(list(set(okt1[i]+mecab1[i])))
 
 tokenizer = Tokenizer()
 tokenizer2 = Tokenizer()
 
-for i in range(len(mix1)):
-    tokenizer.fit_on_texts(mix1[i])
-    tokenizer2.fit_on_texts(ans1[i])
+tokenizer.fit_on_texts(mix1[0:10000])
+tokenizer2.fit_on_texts(ans1[0:10000])
 
 vocab_size = len(tokenizer.word_index)
+vocab_size2 = len(tokenizer2.word_index)
 
 tokenizer = Tokenizer(vocab_size)
+tokenizer2 = Tokenizer(vocab_size2)
+
+tokenizer.fit_on_texts(mix1[0:10000])
+tokenizer2.fit_on_texts(ans1[0:10000])
 
 
 
-X_train = tokenizer.texts_to_sequences(mix1)
-y_train = tokenizer2.texts_to_sequences(ans1[0:100])
+X_train = tokenizer.texts_to_sequences(mix1[0:10000])
+y_train = tokenizer2.texts_to_sequences(ans1[0:10000])
 
 print('리뷰의 최대 길이 :',max(len(review) for review in mix1))
 print('리뷰의 평균 길이 :',sum(map(len, mix1))/len(mix1))
 
-X_train = pad_sequences(X_train, maxlen=21)
-y_train = pad_sequences(y_train, maxlen=1)
+max_len=16
+max_len2=1
 
 
-embedding_dim = 21
+X_train = pad_sequences(X_train, maxlen=max_len)
+y_train = pad_sequences(y_train, maxlen=max_len2)
+
+
+embedding_dim = 100
 hidden_units = 128
 
 model = Sequential()
@@ -158,11 +166,25 @@ model.add(Embedding(vocab_size, embedding_dim))
 model.add(LSTM(hidden_units))
 model.add(Dense(1, activation='sigmoid'))
 
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=4)
+es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=3)
 mc = ModelCheckpoint('best_model.h5', monitor='val_acc', mode='max', verbose=1, save_best_only=True)
 
 model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
-history = model.fit(X_train, y_train, epochs=15, callbacks=[es, mc], batch_size=64, validation_split=0.2)
+history = model.fit(X_train, y_train, epochs=1,callbacks=[es, mc], batch_size=64,validation_split=0.2)
 
-loaded_model = load_model('best_model.h5')
-print("\n 테스트 정확도: %.4f" % (loaded_model.evaluate(X_train, y_train)[1]))
+
+#loaded_model = load_model('best_model.h5')
+#print("\n 테스트 정확도: %.4f" % (loaded_model.evaluate(X_train, y_train)[1]))
+
+
+def sentiment_predict(new_sentence):
+  new_sentence = re.sub(r'[^ㄱ-ㅎㅏ-ㅣ가-힣 ]','', new_sentence)
+  new_sentence = okt.morphs(new_sentence, stem=True) # 토큰화
+  new_sentence = [word for word in new_sentence if not word in stopwords] # 불용어 제거
+  encoded = tokenizer.texts_to_sequences([new_sentence]) # 정수 인코딩
+  pad_new = pad_sequences(encoded, maxlen = max_len) # 패딩
+  score = float(loaded_model.predict(pad_new)) # 예측
+  if(score > 0.5):
+    print("{:.2f}% 확률로 긍정 리뷰입니다.\n".format(score * 100))
+  else:
+    print("{:.2f}% 확률로 부정 리뷰입니다.\n".format((1 - score) * 100))
